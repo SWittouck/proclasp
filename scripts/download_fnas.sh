@@ -11,7 +11,7 @@ for acc in $(cat $fin | cut -f 1) ; do
   exitcode=1 
   attempt=1
   while [[ $exitcode -ne 0 ]] && [[ $attempt -le 5 ]] ; do
-    if [[ $attempts -ne 0 ]] ; then sleep 2 ; echo attempt $attempt ; fi
+    if [[ $attempt -ne 1 ]] ; then sleep 30 ; echo attempt $attempt ; fi
     rsync --copy-links --times --verbose \
       --exclude *_cds_from_genomic.fna.gz \
       --exclude *_rna_from_genomic.fna.gz \
@@ -19,7 +19,7 @@ for acc in $(cat $fin | cut -f 1) ; do
     exitcode=$?
     attempt=$((attempt + 1))
     # echo $exitcode $attempt
-    if [[ $exitcode -ne 0 ]] && [[ $attempt -eq 5 ]] ; then 
+    if [[ $exitcode -ne 0 ]] && [[ $attempt -eq 6 ]] ; then 
       echo failure
       echo $acc >> $dout/failed.txt
     fi
