@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+
+# author: Stijn Wittouck
+# last modified: 18/07/2019
+
+import argparse 
+import os
+import subprocess
+import shutil
+
+parser = argparse.ArgumentParser("A tool to classify prokaryotic genomes on "
+    "the species level")
+
+parser.add_argument(
+    "fin_querypaths",
+    help = "file with paths to the query genome fasta files"
+)
+
+parser.add_argument(
+    "din_refgenomes",
+    help = "directory containing the reference genome fasta files"
+)
+
+parser.add_argument(
+    "fin_speciestable", 
+    help = "tab-separated file without header where the first column "
+    "contains the genome names and the second contains the species labels"
+)
+
+parser.add_argument(
+    "fout",
+    help = "name of the output file with the species classifications"
+)
+
+parser.add_argument(
+    "--qgenome_regex",
+    help = "R-type regular expression to extract the query genome name "
+    "from its file path; by default this is the file name, assuming a .fna "
+    "suffix",
+    default = "[^/]+(?=\.fna)"
+)
+
+parser.add_argument(
+    "--rgenome_regex",
+    help = "R-type regular expression to extract the reference genome name "
+    "from its file path; by default this is the file name, assuming a .fna "
+    "suffix",
+    default = "[^/]+(?=\.fna)"
+)
+
+parser.add_argument(
+    "--threads",
+    help = "number of threads to use for the fastANI calculations; the default "
+    "is 4",
+    default = 4
+)
+
+parser.add_argument(
+    "--batch_size",
+    help = "number of query genomes to use per batch; the default is 350, " 
+    "which will need ~ 4 GB of RAM",
+    default = 350
+)
+
+args = parser.parse_args()
+
+scripts_path = os.path.dirname(os.path.realpath(__file__)) + "/../scripts"
+
+print("this is proclasp version 1.0")
+
+print("calculating fastANI values")
+
+with open(os.devnull, 'w') as devnull:
+    subprocess.run([scripts_path + "/run_fastani.sh", args.fin_querypaths,
+        args.din_refgenomes, args.threads, args.batch_size], stdout = devnull,
+        stderr = devnull)
+
+print("processing fastANI values")
+
+with open(os.devnull, 'w') as devnull:
+    subprocess.run([scripts_path + "/process_anis.R", args.fin_speciestable,
+        "temp.uniquesuffix_1991/fastanis.txt", args.fout, args.qgenome_regex,
+        args.rgenome_regex], stdout = devnull, stderr = devnull)
+
+print("removing temporary files")
+
+shutil.rmtree("temp.uniquesuffix_1991")
+
+print("done")
