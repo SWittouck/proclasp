@@ -11,6 +11,40 @@ Proclasp will report, for each query genome, the reference genome with the highe
 * R packages:
     * [tidyverse](https://www.tidyverse.org/) version >= 1.2.1
 
+## Usage
+
+```
+usage: A tool to classify prokaryotic genomes on the species level
+       [-h] [--qgenome_regex QGENOME_REGEX] [--rgenome_regex RGENOME_REGEX]
+       [--threads THREADS] [--batch_size BATCH_SIZE]
+       fin_querypaths din_refgenomes fin_speciestable fout
+
+positional arguments:
+  fin_querypaths        file with paths to the query genome fasta files
+  din_refgenomes        directory containing the reference genome fasta files
+  fin_speciestable      tab-separated file without header where the first
+                        column contains the genome names and the second
+                        contains the species labels
+  fout                  name of the output file with the species
+                        classifications
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --qgenome_regex QGENOME_REGEX
+                        R-type regular expression to extract the query genome
+                        name from its file path; by default this is the file
+                        name, assuming a .fna suffix
+  --rgenome_regex RGENOME_REGEX
+                        R-type regular expression to extract the reference
+                        genome name from its file path; by default this is the
+                        file name, assuming a .fna suffix
+  --threads THREADS     number of threads to use for the fastANI calculations;
+                        the default is 4
+  --batch_size BATCH_SIZE
+                        number of query genomes to use per batch; the default
+                        is 350, which will need ~ 4 GB of RAM
+```
+
 ## Tutorial 
 
 As a very quick tutorial, we will classify three genomes of the Lactobacillus Genus Complex. The necessary scripts and data are in the folder `lactobacillus`. 
