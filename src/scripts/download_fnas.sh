@@ -21,6 +21,7 @@ for acc in $(cat $fin | cut -f 1) ; do
     rsync --copy-links --times --verbose \
       --exclude *_cds_from_genomic.fna.gz \
       --exclude *_rna_from_genomic.fna.gz \
+      --exclude *_wgsmaster.gbff.gz \
       rsync://$url $dout # > /dev/null 2>&1
     exitcode=$?
     attempt=$((attempt + 1))
